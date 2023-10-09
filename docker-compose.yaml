@@ -1,51 +1,73 @@
 services:
   logindb:
     image: "mongo:latest"
+    container_name: logindb
+
   cruddb-config-0:
     image: "mongo:latest"
     command: mongod --configsvr --replSet crudconfig --bind_ip 0.0.0.0 --port 27017
+    volumes:
+      - ./mongodb/crudconfig.js:/data/db/crudconfig.js
+    container_name: config-0
 
   cruddb-config-1:
     image: "mongo:latest"
     command: mongod --configsvr --replSet crudconfig --bind_ip 0.0.0.0 --port 27017
+    container_name: config-1
 
   cruddb-config-2:
     image: "mongo:latest"
     command: mongod --configsvr --replSet crudconfig --bind_ip 0.0.0.0 --port 27017
+    container_name: config-2
 
   cruddb1-0:
     image: "mongo:latest"
     command: mongod --shardsvr --replSet crud1 --bind_ip 0.0.0.0 --port 27017
+    volumes:
+      - ./mongodb/crud1.js:/data/db/crud1.js
+    container_name: crud1-0
 
   cruddb1-1:
     image: "mongo:latest"
     command: mongod --shardsvr --replSet crud1 --bind_ip 0.0.0.0 --port 27017
+    container_name: crud1-1
 
   cruddb1-2:
     image: "mongo:latest"
     command: mongod --shardsvr --replSet crud1 --bind_ip 0.0.0.0 --port 27017
-
+    container_name: crud1-2
 
   cruddb2-0:
     image: "mongo:latest"
     command: mongod --shardsvr --replSet crud2 --bind_ip 0.0.0.0 --port 27017
+    volumes:
+      - ./mongodb/crud2.js:/data/db/crud2.js
+    container_name: crud2-0
 
   cruddb2-1:
     image: "mongo:latest"
     command: mongod --shardsvr --replSet crud2 --bind_ip 0.0.0.0 --port 27017
+    container_name: crud2-1
 
   cruddb2-2:
     image: "mongo:latest"
     command: mongod --shardsvr --replSet crud2 --bind_ip 0.0.0.0 --port 27017
-  
+    container_name: crud2-2
 
   crud-router:
     image: mongo:latest
     command: mongos --configdb crudconfig/cruddb-config-0:27017,cruddb-config-1:27017,cruddb-config-2:27017 --bind_ip_all --port 27017
-
+    volumes:
+      - ./mongodb/shard.js:/data/db/shard.js
+    depends_on:
+      - cruddb-config-0
+      - cruddb-config-1
+      - cruddb-config-2
+    container_name: crud-router
 
   web:
     build: ./django-app
+    container_name: web
     ports:
       - "5000:5000"
     
