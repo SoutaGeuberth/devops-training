@@ -1,0 +1,51 @@
+services:
+  logindb:
+    image: "mongo:latest"
+  cruddb-config-0:
+    image: "mongo:latest"
+    command: mongod --configsvr --replSet crudconfig --bind_ip 0.0.0.0 --port 27017
+
+  cruddb-config-1:
+    image: "mongo:latest"
+    command: mongod --configsvr --replSet crudconfig --bind_ip 0.0.0.0 --port 27017
+
+  cruddb-config-2:
+    image: "mongo:latest"
+    command: mongod --configsvr --replSet crudconfig --bind_ip 0.0.0.0 --port 27017
+
+  cruddb1-0:
+    image: "mongo:latest"
+    command: mongod --shardsvr --replSet crud1 --bind_ip 0.0.0.0 --port 27017
+
+  cruddb1-1:
+    image: "mongo:latest"
+    command: mongod --shardsvr --replSet crud1 --bind_ip 0.0.0.0 --port 27017
+
+  cruddb1-2:
+    image: "mongo:latest"
+    command: mongod --shardsvr --replSet crud1 --bind_ip 0.0.0.0 --port 27017
+
+
+  cruddb2-0:
+    image: "mongo:latest"
+    command: mongod --shardsvr --replSet crud2 --bind_ip 0.0.0.0 --port 27017
+
+  cruddb2-1:
+    image: "mongo:latest"
+    command: mongod --shardsvr --replSet crud2 --bind_ip 0.0.0.0 --port 27017
+
+  cruddb2-2:
+    image: "mongo:latest"
+    command: mongod --shardsvr --replSet crud2 --bind_ip 0.0.0.0 --port 27017
+  
+
+  crud-router:
+    image: mongo:latest
+    command: mongos --configdb crudconfig/cruddb-config-0:27017,cruddb-config-1:27017,cruddb-config-2:27017 --bind_ip_all --port 27017
+
+
+  web:
+    build: ./django-app
+    ports:
+      - "5000:5000"
+    

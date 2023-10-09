@@ -1,0 +1,5 @@
+docker compose stop web
+docker compose rm web
+docker compose build web
+docker compose create web
+docker compose start web
