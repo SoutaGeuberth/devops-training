@@ -5,5 +5,5 @@ rs.initiate( {
        { _id: 1, host: "cruddb-config-1:27017" },
        { _id: 2, host: "cruddb-config-2:27017" }
     ]
- })
+});
  
